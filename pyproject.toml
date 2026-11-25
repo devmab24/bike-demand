@@ -1,0 +1,34 @@
+[project]
+name = "bike-demand"
+version = "0.1.0"
+description = "Bike-sharing hourly demand investigation (UCI Bike Sharing Dataset)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.0",
+    "pandas<3.2",
+    "scikit-learn<1.9",
+    "matplotlib<3.12",
+    "seaborn",
+    "joblib",
+    "scipy==1.15.3",
+]
+
+[project.optional-dependencies]
+ui = [
+    "streamlit",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+# Virtual project: dependencies are managed, the project itself is not built/installed.
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"

@@ -1,0 +1,47 @@
+{
+  "status": "verified",
+  "provider": "Context7",
+  "verified_at": "2026-11-25",
+  "libraries": [
+    {
+      "name": "pandas",
+      "library_id": "/pandas-dev/pandas",
+      "version": "latest-stable",
+      "topics_checked": ["read_csv", "DataFrame", "groupby", "describe", "column selection"],
+      "documentation_summary": "Context7 (pandas-dev/pandas, High reputation, 12768 snippets). Confirmed: pd.read_csv accepts dtype and dtype_backend; DataFrame construction from dict; column selection via df[label] and df[[labels]]; DataFrame.groupby(...).mean() and .agg(...); DataFrame.describe() with include/exclude options.",
+      "status": "verified"
+    },
+    {
+      "name": "numpy",
+      "library_id": "/websites/numpy_doc",
+      "version": "latest-stable",
+      "topics_checked": ["array operations", "sqrt", "mean"],
+      "documentation_summary": "Context7 (NumPy official docs, High reputation, 15707 snippets). Confirmed: numpy.sqrt is an element-wise ufunc; numpy.mean computes arithmetic mean along axis; ndarray.mean method with axis/dtype/keepdims/where options.",
+      "status": "verified"
+    },
+    {
+      "name": "scikit-learn",
+      "library_id": "/websites/scikit-learn_stable",
+      "version": "latest-stable",
+      "topics_checked": ["train_test_split", "RandomForestRegressor", "Pipeline", "StandardScaler", "metrics"],
+      "documentation_summary": "Context7 (scikit-learn stable docs, High reputation, 18951 snippets). Confirmed: train_test_split(shuffle=False) for temporally ordered data; RandomForestRegressor(n_estimators, random_state, max_depth); Pipeline/make_pipeline with ColumnTransformer; StandardScaler fit on training data only; mean_absolute_error, root_mean_squared_error, r2_score.",
+      "status": "verified"
+    },
+    {
+      "name": "matplotlib",
+      "library_id": "/websites/matplotlib_stable",
+      "version": "latest-stable",
+      "topics_checked": ["figure", "savefig", "subplots"],
+      "documentation_summary": "Context7 (Matplotlib stable docs, High reputation, 22982 snippets). Confirmed: plt.subplots(nrows, ncols, figsize) returns Figure and Axes array; plt.figure() creates new figure; plt.savefig(fname, dpi, bbox_inches='tight') with format inferred from extension.",
+      "status": "verified"
+    },
+    {
+      "name": "seaborn",
+      "library_id": "/websites/seaborn_pydata",
+      "version": "latest-stable",
+      "topics_checked": ["heatmap", "boxplot", "scatterplot"],
+      "documentation_summary": "Context7 (seaborn official docs, High reputation, 3113 snippets). Confirmed: sns.heatmap(data, annot, fmt, cmap, ax) for correlation matrices; sns.boxplot(data, x, y, hue, ax) for categorical plots; sns.scatterplot(data, x, y, hue, size, style, ax) for scatter plots.",
+      "status": "verified"
+    }
+  ]
+}
