@@ -21,3 +21,6 @@ Thumbs.db
 
 # Raw data is staged locally and must not be modified or committed by tooling
 # data/raw/ is intentionally NOT ignored so the staged dataset is reproducible.
+
+# Large model artifacts (too large for git; reproduced by uv run python src/modelling/train.py)
+modelling/artifacts/*.joblib

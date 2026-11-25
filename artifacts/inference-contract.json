@@ -1,0 +1,140 @@
+{
+  "contract_version": "1.0",
+  "model_name": "bike-demand-random-forest",
+  "created_at": "2026-11-25",
+  "pipeline_path": "modelling/artifacts/pipeline.joblib",
+  "feature_names": [
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed"
+  ],
+  "feature_count": 12,
+  "feature_dtypes": {
+    "season": "int64",
+    "yr": "int64",
+    "mnth": "int64",
+    "hr": "int64",
+    "holiday": "int64",
+    "weekday": "int64",
+    "workingday": "int64",
+    "weathersit": "int64",
+    "temp": "float64",
+    "atemp": "float64",
+    "hum": "float64",
+    "windspeed": "float64"
+  },
+  "feature_ranges": {
+    "season": {
+      "min": 1,
+      "max": 4,
+      "description": "1=spring, 2=summer, 3=fall, 4=winter"
+    },
+    "yr": {
+      "min": 0,
+      "max": 1,
+      "description": "0=2011, 1=2012"
+    },
+    "mnth": {
+      "min": 1,
+      "max": 12,
+      "description": "calendar month"
+    },
+    "hr": {
+      "min": 0,
+      "max": 23,
+      "description": "hour of day"
+    },
+    "holiday": {
+      "min": 0,
+      "max": 1,
+      "description": "0=no holiday, 1=holiday"
+    },
+    "weekday": {
+      "min": 0,
+      "max": 6,
+      "description": "0=Sunday, 6=Saturday"
+    },
+    "workingday": {
+      "min": 0,
+      "max": 1,
+      "description": "0=weekend/holiday, 1=working day"
+    },
+    "weathersit": {
+      "min": 1,
+      "max": 4,
+      "description": "1=clear, 2=mist, 3=light rain/snow, 4=heavy rain/ice"
+    },
+    "temp": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "normalized temperature (divide Celsius by 41)"
+    },
+    "atemp": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "normalized apparent temperature (divide Celsius by 50)"
+    },
+    "hum": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "normalized humidity (divide by 100)"
+    },
+    "windspeed": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "normalized wind speed (divide by 67)"
+    }
+  },
+  "target_col": "cnt",
+  "target_description": "total bike rentals per hour",
+  "target_min": 1,
+  "target_max": 977,
+  "preprocessing": {
+    "steps": "StandardScaler applied to all 12 input features",
+    "fit_on": "training set only (chronological split, first 80% by row order)",
+    "note": "scaling is embedded in pipeline.joblib \u2014 do not scale inputs manually"
+  },
+  "output_format": {
+    "type": "float64",
+    "description": "predicted total bike rentals per hour",
+    "note": "predictions may be negative in extreme out-of-range inputs; clip to 0 if needed"
+  },
+  "missing_value_handling": "none \u2014 pipeline does not impute; caller must supply all 12 features",
+  "train_split_cutoff_index": 13903,
+  "train_size": 13903,
+  "test_size": 3476,
+  "metrics": {
+    "baseline_mae": 174.98460136882977,
+    "baseline_rmse": 232.60837481037086,
+    "baseline_r2": -0.11299526466191145,
+    "random_forest_mae": 45.02106650364403,
+    "random_forest_rmse": 69.62407565056078,
+    "random_forest_r2": 0.9002847672150325
+  },
+  "inference_example": {
+    "input": {
+      "season": 3,
+      "yr": 1,
+      "mnth": 9,
+      "hr": 17,
+      "holiday": 0,
+      "weekday": 3,
+      "workingday": 1,
+      "weathersit": 1,
+      "temp": 0.68,
+      "atemp": 0.63,
+      "hum": 0.55,
+      "windspeed": 0.19
+    },
+    "predicted_cnt": 820.52
+  }
+}

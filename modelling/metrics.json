@@ -1,0 +1,30 @@
+{
+  "baseline": {
+    "mae": 174.98460136882977,
+    "rmse": 232.60837481037086,
+    "r2": -0.11299526466191145
+  },
+  "random_forest": {
+    "mae": 45.02106650364403,
+    "rmse": 69.62407565056078,
+    "r2": 0.9002847672150325
+  },
+  "train_size": 13903,
+  "test_size": 3476,
+  "feature_cols": [
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed"
+  ],
+  "target_col": "cnt",
+  "split_index": 13903
+}
