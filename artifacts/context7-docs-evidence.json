@@ -42,6 +42,38 @@
       "topics_checked": ["heatmap", "boxplot", "scatterplot"],
       "documentation_summary": "Context7 (seaborn official docs, High reputation, 3113 snippets). Confirmed: sns.heatmap(data, annot, fmt, cmap, ax) for correlation matrices; sns.boxplot(data, x, y, hue, ax) for categorical plots; sns.scatterplot(data, x, y, hue, size, style, ax) for scatter plots.",
       "status": "verified"
+    },
+    {
+      "name": "scikit-learn (Run 2 additions)",
+      "library_id": "/websites/scikit-learn_stable",
+      "version": "latest-stable",
+      "topics_checked": ["DummyRegressor strategy='mean' baseline", "ColumnTransformer with OneHotEncoder and StandardScaler inside Pipeline", "ColumnTransformer remainder='drop'"],
+      "documentation_summary": "Context7 (scikit-learn stable docs, High reputation, 18951 snippets; same library_id as the scikit-learn entry above, recorded separately for Run 2 topics). Confirmed: sklearn.dummy.DummyRegressor(strategy='mean') predicts the mean of the training targets and ignores X at predict time, documented as a baseline only; sklearn.compose.ColumnTransformer takes (name, transformer, columns) tuples and remainder='drop' discards unlisted columns; ColumnTransformer is composed with a regressor inside sklearn.pipeline.Pipeline and fit on training data only.",
+      "status": "verified"
+    },
+    {
+      "name": "joblib",
+      "library_id": "/joblib/joblib",
+      "version": "latest-stable",
+      "topics_checked": ["joblib.dump", "joblib.load", "file-like object persistence"],
+      "documentation_summary": "Context7 (joblib, source persistence.rst, High reputation, 724 snippets). Confirmed: joblib.dump(value, filename, compress=0, protocol=None, cache_size=None) persists a Python object and returns the list of created filenames; joblib.load(filename, mmap_mode=None) returns the deserialized object; both accept file paths or binary file objects (open(..., 'wb') / open(..., 'rb')); compression is selected via the compress argument or the file extension.",
+      "status": "verified"
+    },
+    {
+      "name": "pytest",
+      "library_id": "/pytest-dev/pytest",
+      "version": "latest-stable",
+      "topics_checked": ["plain assert statements in test functions", "assertion introspection output", "running pytest from the command line"],
+      "documentation_summary": "Context7 (pytest-dev/pytest, High reputation, 8191 snippets). Confirmed: tests are plain functions using bare assert statements; pytest discovers test_*.py files and test_* functions; on failure pytest reports assertion introspection (e.g. 'assert 4 == 5'); the pytest CLI runs the suite and python -m pytest is an equivalent invocation.",
+      "status": "verified"
+    },
+    {
+      "name": "streamlit",
+      "library_id": "/streamlit/docs",
+      "version": "latest-stable",
+      "topics_checked": ["st.sidebar object and with notation", "st.form with widgets and st.form_submit_button", "st.number_input", "st.selectbox", "st.metric"],
+      "documentation_summary": "Context7 (streamlit/docs, High reputation, 4759 snippets). Confirmed: st.sidebar.<element> and 'with st.sidebar:' both place widgets in the sidebar; st.form(key) batches widgets until st.form_submit_button is clicked, with exactly one submit button per form and widget values read after the form block; st.number_input(label, min_value, max_value, value, step, format, key, help, ...) returns int or float; st.selectbox(label, options, index, format_func, key, help, placeholder, ...) returns the selected option; st.metric(label, value, delta) displays a metric with an optional change indicator. st.button was not queried in this session and is not verified here.",
+      "status": "verified"
     }
   ]
 }
