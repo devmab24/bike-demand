@@ -167,6 +167,7 @@ Do not create unnecessary directories or duplicate existing files.
 | colab-notebook-engineer | Google Colab notebook |
 | inference-ui-builder | Streamlit application |
 | qa-auditor | Independent quality audit |
+| git-supervisor | Version control hygiene, pre-commit checks, PR coordination |
 
 Specialist agents must not modify files owned by another agent without explicit authorization.
 

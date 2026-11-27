@@ -56,6 +56,23 @@ values.
 uv run pytest
 ```
 
+## Agents
+
+| Agent | Responsibility |
+|---|---|
+| repository-architect | Repository structure and boundaries |
+| project-setup | Python environment, dependencies, dataset, data loading |
+| research-agent | Dataset/domain research |
+| documentation-researcher | Context7 documentation evidence |
+| data-scientist | Exploratory data analysis |
+| ml-engineer | Model training, evaluation, artifacts, inference contract |
+| colab-notebook-engineer | Google Colab notebook |
+| inference-ui-builder | Streamlit application |
+| qa-auditor | Independent quality audit |
+| git-supervisor | Version control hygiene, pre-commit checks, PR coordination |
+
+Agent definitions live in `.claude/agents/`. The Lead Agent coordinates; specialist agents own their implementation boundaries and must not modify files owned by another agent without explicit authorization.
+
 ## Notes
 
 - Feature importance and correlations are not causal evidence.
