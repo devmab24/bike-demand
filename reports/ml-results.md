@@ -78,7 +78,7 @@ The pipeline does not impute. All 12 features must be supplied for every row.
 |---|---|
 | Type | float64 numpy array, shape (n_samples,) |
 | Meaning | Predicted total bike rentals per hour (`cnt`) |
-| Observed range (training data) | 1–977 |
+| Observed range (full dataset) | 1–977 (training split: 1–957) |
 | Note | Clip to 0 if needed for extreme out-of-range inputs |
 
 ### 3.6 Inference Example
@@ -119,7 +119,7 @@ Feature importances reflect the mean decrease in impurity and are **not causal e
 - The model was trained on 2011–2012 data from Washington D.C. It may not generalize to other cities or years.
 - `yr` appears as a predictor; the model implicitly learns year-level growth trends that cannot extrapolate.
 - Extreme weather conditions (weathersit=4) are rare in the training set; predictions there carry higher uncertainty.
-- Predictions may be negative for inputs far outside training ranges; clip to 0 before display.
+- As a mean-of-leaves Random Forest trained on `cnt` ≥ 1, the model cannot predict below the minimum training target (1); the app additionally clips predictions at 0 as a safeguard.
 - Feature importances are not causal. High importance for `hr` reflects strong correlation with demand patterns, not a causal mechanism.
 
 ---

@@ -24,7 +24,7 @@ predicting demand?
 
 - **Missing values:** 0 across all 17 columns.
 - **Duplicate rows:** 0.
-- **Data types:** 13 integer columns, 3 float columns (`temp`, `atemp`, `hum`, `windspeed`), 1 object (`dteday`).
+- **Data types:** 12 integer columns, 4 float columns (`temp`, `atemp`, `hum`, `windspeed`), 1 object (`dteday`).
 - `dteday` is a string date column; temporal information is fully captured by `yr`, `mnth`, and `hr`.
 - `casual` and `registered` are excluded from predictor analysis — they sum to `cnt` and cause target leakage.
 - `instant` is an identifier and is excluded.
@@ -96,7 +96,7 @@ approximately 2.1:1. This suggests seasonal temperature/daylight effects on ride
 | 4 | Heavy Rain / Ice / Thunderstorm | 74.3 |
 
 Demand drops monotonically as conditions worsen — from 204.9 in clear weather to 74.3
-in severe conditions, a 63% reduction. Category 4 has only 3 observations, so the estimate
+in severe conditions, a ~64% reduction. Category 4 has only 3 observations, so the estimate
 is unreliable.
 
 **Correlation of `weathersit` with `cnt`: −0.142.**

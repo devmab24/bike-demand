@@ -33,22 +33,21 @@ Run all project commands through `uv run`, for example `uv run pytest`.
 ```
 src/data_pipeline/   dataset loading and structural validation
 src/data_analysis/   exploratory analysis
-src/models/          model training and inference
-src/evaluation/      evaluation metrics
+src/modelling/       model pipeline and training/evaluation
 tests/               pytest suite
 ```
 
 ## Using the data pipeline
 
 ```python
-from src.data_pipeline.load_data import load_hour_csv
+from src.data_pipeline.load import load_hour_csv
 
 df = load_hour_csv()  # defaults to data/raw/hour.csv
 ```
 
 `load_hour_csv` raises `FileNotFoundError` when the file is missing and
-`ValueError` when required columns are absent or `cnt` has nulls or negative
-values.
+`ValueError` when the file cannot be parsed or its row count, column count,
+or required columns do not match the UCI hourly dataset.
 
 ## Running tests
 
