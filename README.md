@@ -56,6 +56,35 @@ values.
 uv run pytest
 ```
 
+## Running the inference app
+
+**Prerequisites:**
+
+- Environment installed with the `ui` extra (see [Environment setup](#environment-setup)).
+- Model artifact present at `modelling/artifacts/pipeline.joblib` (produced by the ML training step).
+
+**Launch:**
+
+```powershell
+uv run streamlit run app/app.py
+```
+
+The app opens at **http://localhost:8501** in your browser.
+
+**What it does:**
+
+Adjust the sidebar inputs — hour, season, weather conditions, and normalized environmental readings — then click **Predict Demand**. The app runs the trained Random Forest pipeline and displays the predicted hourly rental count.
+
+| Input group | Features |
+|---|---|
+| Time | Hour of day, year, month, day of week, holiday, working day |
+| Season & weather | Season, weather situation |
+| Environment | Temperature, apparent temperature, humidity, wind speed (all normalized 0–1) |
+
+Temperature, apparent temperature, humidity, and wind speed must be supplied pre-normalized (divide by 41, 50, 100, and 67 respectively).
+
+**Stop the server:** `Ctrl+C` in the terminal where it is running.
+
 ## Agents
 
 | Agent | Responsibility |
