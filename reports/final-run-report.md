@@ -1,430 +1,313 @@
-# Final Run Report — Agentic Engineering: Bike Demand Investigation
+# Final Run Report: GitHub-to-Local Reproducibility Test (Run 3)
 
-**Run date:** 2026-11-27  
-**Branch:** master  
-**Lead Agent:** Claude Sonnet 4.6  
-**Run type:** Fresh-session end-to-end verification with one authorized notebook correction
+**Execution date:** 2026-11-27
+**Lead Agent:** Claude Sonnet 5.5 (Claude Code)
+**Run type:** Fresh session. The local project was intentionally cleaned and then recovered from GitHub. The retained `.venv`, dataset and agent architecture were reused, and nothing was downloaded.
 
----
-
-## 1. Executive Summary
-
-This report documents a complete end-to-end verification run of the Bike Demand Investigation project. The run was inspection-driven: all agents operated in read-only mode by default, and the only authorized file modification was the notebook's dataset-loading correction.
-
-**Files modified: 1** (`notebooks/bike_demand_investigation.ipynb`)  
-**Agents completing without file changes: 9 of 11** (all except colab-notebook-engineer)  
-**Tests passing: 39 / 39**  
-**QA verdict:** PASS (see Stage 8)  
-**Final application status:** Launched at http://localhost:8501 (see Stage 9)
+> This report replaces the previous run's report, which is still available in git history (commit `c016a4a`).
 
 ---
 
-## 2. Preflight Verification
+## A. Run identity
 
-| Item | Result | Evidence |
-|---|---|---|
-| Branch | master | `git status` clean |
-| Latest commit | d2b4339 | `docs(claude.md): add Running the Inference App section` |
-| Working tree | Clean | No uncommitted changes at run start |
-| Python version (venv) | 3.12.1 | `uv run python --version` |
-| numpy | 2.4.6 | package verified |
-| pandas | 2.3.3 | package verified |
-| scikit-learn | 1.8.0 | package verified |
-| matplotlib | 3.11.2 | package verified |
-| seaborn | 0.13.2 | package verified |
-| joblib | 1.6.0 | package verified |
-| pytest | 9.2.0 | package verified |
-| streamlit | 1.67.0 | package verified |
-| `data/raw/hour.csv` | Present | 17,379 rows × 17 columns |
-| Dataset SHA-256 | `e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f` | computed |
-| `modelling/artifacts/pipeline.joblib` | Present | loads with sklearn 1.8.0 |
-| `artifacts/inference-contract.json` | Present | 12 features, RF R²=0.900 |
-| `artifacts/context7-docs-evidence.json` | Present | 9 libraries verified |
-| All 11 agent definitions | Present | `.claude/agents/*.md` |
-
----
-
-## 3. Agent Execution Record
-
-| Stage | Agent | Verdict | Files Modified |
-|---|---|---|---|
-| 1 | repository-architect | PASS WITH NOTES | 0 |
-| 2a | project-setup | PASS | 0 |
-| 2b | research-agent | PASS | 0 |
-| 2c | documentation-researcher | PASS | 0 |
-| 3 | data-scientist | PASS | 0 |
-| 4 | ml-engineer | PASS | 0 |
-| 5 | colab-notebook-engineer | PASS (correction applied) | 1 |
-| 6 | inference-ui-builder | PASS | 0 |
-| 7 | git-supervisor | PASS | 0 (review only) |
-| 8 | qa-auditor | PASS | 0 |
-| 9 | ui-launcher | PASS | 0 |
-
----
-
-## 4. Phase-by-Phase Status
-
-### Stage 1 — Repository Architecture
-
-**Verdict: PASS WITH NOTES**
-
-Agent: repository-architect  
-Reference: `reports/repository-architecture.md`
-
-The repository contains all required functional components. The architecture document has accumulated naming drift relative to the actual implementation over multiple engineering runs. All deviations are documentation-only — no functional code is broken.
-
-**Structural deviations (naming drift only, all functional):**
-
-| Expected (architecture doc) | Actual (implemented) | Impact |
-|---|---|---|
-| `app/dashboard.py` | `app/app.py` | None — CLAUDE.md explicitly references `app/app.py` |
-| `src/models/` + `src/evaluation/` | `src/modelling/` | None — equivalent functionality, different package layout |
-| `modelling/figures/eda_*.png` | `reports/figures/0*.png` | None — EDA figures accessible, different location/naming |
-| `reports/research-findings.md` | `reports/research-notes.md` | None — same content, different filename |
-| `tests/test_models.py` | `tests/test_ml.py` | None — 39/39 tests pass |
-
-**Decision:** Architecture document will not be retroactively corrected in this run to avoid scope creep. The discrepancy is noted here and in the QA findings. The implementation is correct and all tests pass.
-
----
-
-### Stage 2 — Environment, Dataset, Research
-
-**Verdict: PASS**
-
-**Project Setup verification:**
-- Python 3.12 (venv: 3.12.1) ✓
-- uv environment intact, `.venv/` present ✓
-- All required dependencies present (see §2 preflight) ✓
-- `data/raw/hour.csv`: 17,379 rows × 17 columns, SHA-256 verified ✓
-- `src/data_pipeline/load.py`: loads dataset, returns all 17 columns ✓
-- No `uv sync` required; existing environment is functional ✓
-
-**Research Agent verification:**
-- `reports/research-notes.md` present and accurate ✓
-- `reports/domain-context.md` present ✓
-- UCI dataset origin, Fanaee-T & Gama 2013 reference accurate ✓
-
-**Documentation Researcher verification:**
-- `artifacts/context7-docs-evidence.json`: 9 libraries verified ✓
-  - pandas, numpy, scikit-learn, matplotlib, seaborn, joblib, pytest, streamlit
-  - All verified against high-reputation Context7 sources ✓
-- Context7 gate: SATISFIED ✓
-
----
-
-### Stage 3 — Data Science (EDA)
-
-**Verdict: PASS**
-
-- `src/data_analysis/eda.py`: present and consistent ✓
-- `reports/eda-findings.md`: complete findings report ✓
-- EDA figures (6): `reports/figures/01_*.png` through `06_*.png` ✓
-- EDA artifacts: `artifacts/eda/summary_statistics.csv`, `correlation_matrix.csv`, `demand_by_hour.csv` ✓
-- Leakage columns (`cnt`, `casual`, `registered`, `instant`) correctly excluded from predictor analysis ✓
-- No feature importances or correlations presented as causal evidence ✓
-- `tests/test_eda.py`: passes (included in 39/39 suite) ✓
-
----
-
-### Stage 4 — Machine Learning
-
-**Verdict: PASS**
-
-- `src/modelling/pipeline.py`: defines FEATURE_COLS (12 features), no leakage ✓
-- `src/modelling/train.py`: chronological split (sort by `instant`, no shuffle) ✓
-- Preprocessing: `StandardScaler` fitted on training data only (via `ColumnTransformer`) ✓
-- Baseline: `DummyRegressor(strategy='mean')` ✓
-- Random Forest: `n_estimators=100, random_state=42, n_jobs=-1` ✓
-- **Metrics:**
-  - Baseline: MAE=174.98, RMSE=232.61, R²=−0.11
-  - Random Forest: MAE=45.02, RMSE=69.62, **R²=0.900**
-- Split: 13,903 train / 3,476 test (80/20 chronological) ✓
-- `modelling/artifacts/pipeline.joblib`: present, loads correctly ✓
-- `artifacts/inference-contract.json`: complete, 12 features documented ✓
-- `modelling/figures/feature_importance.png`, `actual_vs_predicted.png` ✓
-- `tests/test_ml.py`, `tests/test_inference.py`: all pass ✓
-
-**Excluded predictors confirmed:** `cnt`, `casual`, `registered`, `instant`, `dteday` — all absent from `FEATURE_COLS`.
-
----
-
-### Stage 5 — Notebook (Authorized Correction)
-
-**Verdict: PASS — correction applied**
-
-**Issue confirmed:** Cell 4 previously downloaded the dataset from the UCI URL (`https://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip`), violating the requirement to use the canonical `data/raw/hour.csv`.
-
-**Correction applied to `notebooks/bike_demand_investigation.ipynb`:**
-
-| Cell | Change |
+| Item | Value |
 |---|---|
-| Cell 0 | Updated "How to run" section: removed "All data are downloaded automatically; no local files are needed." Added explanation of local vs. Colab execution and SHA-256 requirement. |
-| Cell 4 | Replaced UCI download with: local path detection → SHA-256 verification → Colab upload prompt. No silent fallback to UCI. Clear failure if file absent or corrupted. |
-
-**Verification of correction:**
-- `archive.ics.uci.edu` URL: removed ✓
-- `EXPECTED_SHA256` constant present: `e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f` ✓
-- `_verify_csv_bytes()`: verifies SHA-256, shape, and schema ✓
-- Local execution path: finds `data/raw/hour.csv` via `Path.cwd()` candidates ✓
-- Colab execution path: prompts `files.upload()`, rejects wrong filename ✓
-- No silent UCI fallback ✓
-- Local simulation test: PASS (17,379 rows × 17 columns, SHA-256 matches) ✓
-
-**Colab limitation:** Google Colab OAuth/interactive execution cannot be tested in this non-interactive session. The Colab code path is structurally correct (uses `google.colab.files.upload()`, validates uploaded bytes against SHA-256). Human execution instructions:
-1. Open the notebook in Google Colab
-2. Run all cells top to bottom
-3. When Cell 4 executes, click "Choose Files" in the upload widget
-4. Navigate to `data/raw/hour.csv` in your local project clone and upload it
-5. The cell verifies SHA-256 and loads the dataset
+| GitHub repository | https://github.com/devmab24/bike-demand.git (`origin`) |
+| Synchronized branch | `master` |
+| Initial synchronized commit | `f6147930f42b1f3546e17942704f23ead21bd160` (= `origin/master`, 0 ahead / 0 behind) |
+| Working branch for corrections | `fix/run3-reproducibility-corrections` (local only, **not pushed**) |
+| Correction commits | `5b5c514` (docs and notebook corrections C1–C5); `7add08b` (notebook SHA-256 fix M-1, README m-2) |
+| Final commit | This report is committed on the same branch in a follow-up commit (see section I) |
 
 ---
 
-### Stage 6 — Streamlit Application
+## B. Agent execution register
 
-**Verdict: PASS — no changes required**
+| Agent | Invoked (phase) | Verdict | Files changed | Report received |
+|---|---|---|---|---|
+| git-supervisor | Phase 0 sync; Phase 6 review ×2 and commits | PASS (sync, with CRLF warning); READY ×2 | none (restored 46 deleted tracked files; created 2 authorized commits) | Yes |
+| repository-architect | Phase 1 inspection; correction C2 | PASS WITH FINDINGS | `reports/repository-architecture.md` (C2) | Yes |
+| project-setup | Phase 1 environment and dataset; C1, m-2 | PASS WITH FINDINGS | `README.md` (C1, m-2) | Yes |
+| research-agent | Phase 1 research verification | PASS WITH FINDINGS | none | Yes |
+| documentation-researcher | Phase 1 Context7 evidence | PASS WITH FINDINGS | none | Yes |
+| data-scientist | Phase 2 EDA reproduction; C3 | PASS WITH FINDINGS | `reports/eda-findings.md` (C3) | Yes |
+| ml-engineer | Phase 3 ML reproduction; C4 | PASS WITH FINDINGS | `reports/ml-results.md` (C4) | Yes |
+| colab-notebook-engineer | Phase 4 notebook; C5, M-1 | PASS WITH FINDINGS (Colab not executed) | `notebooks/bike_demand_investigation.ipynb` (C5, M-1) | Yes |
+| inference-ui-builder | Phase 5 app verification | PASS WITH FINDINGS | none | Yes |
+| qa-auditor | Phase 7 audit; re-audit | **FAIL** → **PASS WITH LIMITATIONS** | none | Yes |
+| ui-launcher | Phase 8 launch | LAUNCHED, REACHABLE LOCALLY | none | Yes |
 
-- `app/app.py`: present, structurally correct ✓
-- Feature order: 12 features in correct order per inference contract ✓
-- `FEATURE_ORDER` matches `FEATURE_COLS` in pipeline.py ✓
-- Input validation: `validate_inputs()` checks all ranges ✓
-- Pipeline loading: `@st.cache_resource`, resolves path via `Path(__file__).parent` ✓
-- Prediction: clips to 0, rounds to int ✓
-- Error handling: `FileNotFoundError` and generic `Exception` handled ✓
-- `tests/test_inference.py`: 6 tests, all pass ✓
-
----
-
-### Stage 7 — Git Review
-
-**Verdict: PASS** (see git-supervisor report)
-
-One file changed: `notebooks/bike_demand_investigation.ipynb`  
-No secrets, credentials, or unintended files staged.
+Regenerated outputs are not counted as changes. Running EDA and training rewrote the tracked outputs, but every one was byte-identical to HEAD (see section F).
 
 ---
 
-### Stage 8 — QA Audit
+## C. Repository recovery
 
-**Verdict: PASS**
-
-Agent: qa-auditor (independent, read-only)  
-Report: `reports/qa-audit-report.md`
-
-39 individual checks run across 17 categories — all PASS.  
-3 low-severity findings (see §16). No critical or high-severity issues.
-
-**Key independent verifications performed:**
-- SHA-256 of `data/raw/hour.csv` confirmed: `e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f`
-- Full pytest suite executed: 39/39 PASS in 4.40s
-- FEATURE_COLS vs inference contract: exact match confirmed programmatically
-- Notebook Cell 4: UCI URL absent, SHA-256 constant correct, `_verify_csv_bytes` present
-- Inference contract example: `season=3, hr=17, ...` → predicted 820.52 (matches contract)
+- The cleanup left 46 tracked files deleted (` D`), with no other modified or untracked files.
+- Restore command: `git ls-files -d -z | xargs -0 git restore --source=HEAD --`. Afterwards `git ls-files -d` was empty.
+- `git fetch origin` ran. `git rev-list --left-right --count master...origin/master` gave `0 0`, so no merge was needed.
+- `HEAD` = `origin/master` = `f6147930…`.
+- No `reset --hard`, `clean`, force-push or history rewrite was used.
+- **Warning (non-blocking):**
+  - After the restore, `git status` lists files as ` M` purely because of line endings: 28 files initially, 24 after the correction commits.
+  - Cause: `core.autocrlf=true` in the system gitconfig and no `.gitattributes` file, so git writes LF blobs to disk as CRLF.
+  - Evidence that content is unchanged:
+    - `git diff --quiet` exits 0.
+    - `git diff --ignore-cr-at-eol` is empty.
+    - `git hash-object` equals `HEAD:<file>` for every checked file.
 
 ---
 
-### Stage 9 — UI Launch
+## D. Environment verification
 
-**Verdict: PASS — application live at http://localhost:8501**
-
-Agent: ui-launcher  
-
-Pre-launch checklist results:
-- QA gate: `reports/qa-audit-report.md` contains "FINAL VERDICT: PASS" ✓
-- `app/app.py` present ✓
-- `modelling/artifacts/pipeline.joblib` present ✓
-- Streamlit 1.67.0 installed ✓
-- Port 8501 free before launch ✓
-
-Launch command: `uv run streamlit run app/app.py --server.port 8501 --server.headless true`  
-HTTP 200 confirmed from http://localhost:8501 ✓  
-Streamlit process PID: 21316, listening on 0.0.0.0:8501
-
-**To stop:** `Stop-Process -Name "streamlit"` in PowerShell
-
----
-
-## 5. Files Inspected
-
-| File | Purpose | Status |
-|---|---|---|
-| `CLAUDE.md` | Project instructions | Verified |
-| `reports/repository-architecture.md` | Architecture spec | Verified (naming drift noted) |
-| `pyproject.toml` | Dependencies | Verified |
-| `uv.lock` | Locked dependencies | Verified |
-| `.python-version` | Python pin | Verified |
-| `data/raw/hour.csv` | Canonical dataset | SHA-256 verified |
-| `src/data_pipeline/load.py` | Data loading | Verified |
-| `src/data_analysis/eda.py` | EDA module | Verified |
-| `src/modelling/pipeline.py` | ML pipeline | Verified |
-| `src/modelling/train.py` | Training script | Verified |
-| `app/app.py` | Streamlit app | Verified |
-| `artifacts/context7-docs-evidence.json` | Context7 gate | Verified |
-| `artifacts/inference-contract.json` | Inference contract | Verified |
-| `modelling/metrics.json` | Model metrics | Verified |
-| `modelling/artifacts/pipeline.joblib` | Saved model | Verified |
-| `notebooks/bike_demand_investigation.ipynb` | Colab notebook | Verified + corrected |
-| `tests/test_load.py` | Data tests | Verified |
-| `tests/test_eda.py` | EDA tests | Verified |
-| `tests/test_ml.py` | ML tests | Verified |
-| `tests/test_inference.py` | Inference tests | Verified |
-| All 11 `.claude/agents/*.md` | Agent definitions | Verified |
-| `.claude/settings.json` | Hooks config | Verified |
-
----
-
-## 6. Files Modified
-
-| File | Agent | Reason | Authorization |
-|---|---|---|---|
-| `notebooks/bike_demand_investigation.ipynb` | colab-notebook-engineer | Dataset loading used UCI URL instead of canonical `data/raw/hour.csv` | Explicitly authorized in run instructions |
-
----
-
-## 7. Files Intentionally Left Unchanged
-
-All other project files. Notably:
-- `src/modelling/` — package naming differs from architecture doc but is fully functional
-- `reports/repository-architecture.md` — naming drift from implementation; not corrected to stay within authorized scope
-- `modelling/artifacts/pipeline.joblib` — model artifact is correct; no retraining performed
-- `data/raw/hour.csv` — raw dataset is immutable
-
----
-
-## 8. Dataset Checksum and Staging Verification
-
-| Property | Value |
+| Item | Value |
 |---|---|
-| File | `data/raw/hour.csv` |
-| SHA-256 | `e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f` |
-| Rows | 17,379 |
-| Columns | 17 |
-| Source | UCI Bike Sharing Dataset (Fanaee-T & Gama, 2013) |
-| Immutability | Confirmed — not modified in this run |
+| Python (`.venv/Scripts/python.exe`) | 3.12.16 (`.python-version` = 3.12) |
+| uv | 0.13.7 |
+| Interpreter used by `uv run --no-sync` | project `.venv` (verified `sys.executable`) |
+| numpy / pandas / scikit-learn | 2.4.6 / 2.3.3 / 1.8.0 |
+| matplotlib / seaborn / joblib | 3.11.2 / 0.13.2 / 1.6.0 |
+| pytest (dev) / streamlit (ui extra) | 9.2.0 / 1.67.0 |
+| Lock consistency | `uv lock --check --offline` → exit 0. `uv.lock` was byte-identical before and after (`cmp`). |
 
-The SHA-256 checksum is now embedded in the notebook for verification at load time.
-
----
-
-## 9. Context7 Verification
-
-**Gate status: SATISFIED**
-
-Evidence file: `artifacts/context7-docs-evidence.json`  
-Libraries verified: 9 (pandas, numpy, scikit-learn ×2, matplotlib, seaborn, joblib, pytest, streamlit)  
-All entries have `"status": "verified"` from high-reputation Context7 sources.
+**No dependency downloads occurred.**
+- Every Python invocation used `UV_OFFLINE=1 uv run --no-sync`.
+- None of the following were run: `uv sync`, `uv add`, `uv lock` (other than the offline check), `pip`, conda, or cache clearing.
+- The `.venv` was not recreated.
+- Streamlit was already present in the retained `.venv` from an earlier authorized UI-extra installation.
 
 ---
 
-## 10. EDA and ML Verification
+## E. Dataset verification
 
-**EDA:** Correct research question, correct feature selection, no leakage columns in analysis.  
-**ML:** Chronological split, training-only preprocessing fit, correct model comparison, all metrics computed.  
-**Feature importance:** Correctly labeled as "not causal evidence" in both training code and notebook.
-
----
-
-## 11. Inference Contract Verification
-
-| Property | Value |
+| Item | Value |
 |---|---|
-| Contract version | 1.0 |
-| Model | bike-demand-random-forest |
-| Features | 12 (season, yr, mnth, hr, holiday, weekday, workingday, weathersit, temp, atemp, hum, windspeed) |
-| Target | cnt |
-| RF R² | 0.900 |
-| Pipeline path | `modelling/artifacts/pipeline.joblib` |
-| Example prediction | verified against loaded pipeline (match < 0.01) |
+| Canonical path | `data/raw/hour.csv` |
+| Rows × columns | 17,379 × 17. Null cells: 0. Duplicate rows: 0. `cnt == casual + registered` on all rows. Dates 2011-01-01 to 2012-12-31. |
+| SHA-256 of the committed (LF) file, the canonical value | `b03a2d02e8c10f435c43c7f0b358b7e34a003afea53dbc37f0183f2763295133` |
+| SHA-256 of this Windows working copy (CRLF via autocrlf) | `e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f` |
+| Integrity outcome | PASS. No content difference from HEAD; the two hashes differ only in line endings (17,380 CR bytes). |
+
+**Correction to earlier reports:** previous runs recorded `e03de4…504f` as the dataset hash. That value is only the CRLF form produced on this Windows machine. The file as stored on GitHub hashes to `b03a2d…3133`. See finding M-1 in section G.
 
 ---
 
-## 12. Notebook Verification and Colab Limitations
+## F. Reproduction results
 
-**Local execution:** Cell 4 executes successfully, finds `data/raw/hour.csv`, verifies SHA-256, loads 17,379 rows.  
-**Colab execution:** Cannot be verified in this non-interactive session. The code path is structurally correct. See Stage 5 for human execution instructions.  
-**No fabricated outputs:** Notebook outputs were cleared from Cell 4 during correction; outputs from other cells reflect real prior execution.
+### EDA (data-scientist)
+- `uv run --no-sync python src/data_analysis/eda.py` exited 0.
+- All 9 outputs are **byte-identical** to HEAD (the 3 CSVs in `artifacts/eda/` and figures `reports/figures/01–06`).
+- The numbers in `eda-findings.md` reproduce:
+  - Hourly peaks: 08:00 (359.0) and 17:00 (461.5).
+  - Season means by code: 111.1, 208.3, 236.0, 198.9.
+  - Weather means: 204.9, 175.2, 111.6, 74.3.
+  - Correlation with `temp`: r = 0.405.
+
+### Modelling (ml-engineer)
+- `uv run --no-sync python src/modelling/train.py` exited 0 in 5.7 s.
+- Split: chronological (sorted by `instant`, no shuffle), split index 13,903.
+  - Train: 13,903 rows, 2011-01-01 to 2012-08-07.
+  - Test: 3,476 rows, 2012-08-07 to 2012-12-31.
+- Features: 12 predictors. Excluded: `cnt`, `casual`, `registered`, `instant`, `dteday`.
+- `StandardScaler` is fitted on the training split only (scaler `mean_` equals the training means; `n_samples_seen_` = 13,903).
+
+| Model | MAE | RMSE | R² | Reference (Run 2) | Difference |
+|---|---:|---:|---:|---|---|
+| Mean baseline (`DummyRegressor`) | 174.9846 | 232.6084 | −0.11300 | 174.98 / 232.61 / −0.11 | none |
+| Random Forest (100 trees, seed 42) | 45.0211 | 69.6241 | 0.90028 | 45.02 / 69.62 / 0.90 | none |
+
+- QA recomputed these metrics from the saved model, with both sklearn and manual formulas, and got identical values.
+- The baseline's negative R² comes from demand growth: the training mean is 174.6 and the test mean is 248.8.
+- Residual diagnostics (notebook only):
+  - RF mean residual +16.46, std 67.65. This is a systematic under-prediction in late 2012.
+  - Largest errors are at peak hours (17:00 MAE 104.3).
+
+### Model artifact
+- Path: `modelling/artifacts/pipeline.joblib`. It is gitignored and was regenerated in this run.
+- SHA-256 `73ad7db16e4e5a4c473d145a5a2bdd35068fdf6389e7caad120fecdf9872a834`, 119,890,330 bytes.
+- QA regenerated it in an isolated copy of the project and got a byte-identical file.
+- This shows byte-level reproducibility on this machine and environment only. It is not a cross-platform guarantee.
+- `modelling/metrics.json`, `artifacts/inference-contract.json` and both `modelling/figures/*.png` are byte-identical to HEAD.
+
+### Inference contract
+- The 12 `feature_names` match the pipeline's `feature_names_in_`, in the same order.
+- Data types and value ranges match the data.
+- The contract's example input predicts **820.52**, equal to the value stored in the contract.
+
+### Notebook (colab-notebook-engineer)
+- Format: nbformat 4.5, 37 cells (19 code), execution counts 1–19 in order.
+- Dataset access:
+  - Locally it uses a relative path; in Colab it uses `files.upload()`.
+  - It never downloads data and has no fallback dataset.
+  - A SHA-256 check stops the notebook on a mismatch.
+- All code cells were executed **locally** in the project environment, with `%`/`!` lines skipped. The metrics match the values above exactly, and printed output matches the stored outputs.
+- **Not executed in Google Colab** (no authenticated Colab runtime). See section G.
+
+### Streamlit application (inference-ui-builder, ui-launcher)
+- The app loads `modelling/artifacts/pipeline.joblib` via `@st.cache_resource` and accepts exactly the 12 contract features, with range checks.
+- If the model file is missing, it shows a clear error and disables the Predict button.
+- AppTest results:
+
+| Input | Displayed |
+|---|---|
+| Contract example | "821 rentals / hour" |
+| Minimum edge | "20 rentals / hour" |
+| Maximum edge | "84 rentals / hour" |
+
+- There were no exceptions. The live launch is in section H.
 
 ---
 
-## 13. Streamlit Verification and URL
+## G. QA results
 
-**Application:** `app/app.py` — verified correct feature order, validation, and pipeline loading.  
-**URL:** http://localhost:8501  
-**Launch command:** `uv run streamlit run app/app.py --server.port 8501 --server.headless true`
+**Final verdict: PASS WITH LIMITATIONS.** The first audit returned **FAIL**; after fix M-1, the re-audit of commit `7add08b` passed with limitations.
 
-*(Launch details populated after Stage 9)*
+**Tests:** `UV_OFFLINE=1 uv run --no-sync pytest -v`: **39 collected, 39 passed, 0 failed, 0 skipped, 0 errors.**
 
----
+| File | Tests |
+|---|---:|
+| `test_load.py` | 11 |
+| `test_eda.py` | 5 |
+| `test_ml.py` | 11 |
+| `test_inference.py` | 12 |
 
-## 14. Test Results
+### Resolved findings
 
-| Suite | Tests | Result |
+**M-1 (Major): the notebook's SHA-256 check failed on the dataset as GitHub stores it.**
+- The notebook hard-coded the CRLF hash `e03de4…`.
+- Any LF copy failed with "SHA-256 mismatch". That includes Colab, Linux, macOS, GitHub raw downloads and Windows with `autocrlf=false`.
+- Phases 0–6 missed this because every check used this machine's CRLF working copy.
+- Fix (commit `7add08b`): hash the file after converting CRLF to LF, and expect the canonical LF hash `b03a2d…`.
+- QA verified the fixed check against five inputs:
+
+| Input | Result |
+|---|---|
+| LF file | passes |
+| CRLF file | passes |
+| Tampered LF file | rejected |
+| Tampered CRLF file | rejected |
+| Extra newline | rejected |
+
+**m-2 (Minor): the README did not say how to rebuild the gitignored model.** Fixed by adding a "Reproducing the analysis and model" section.
+
+### Open findings
+These were not fixed. They are recommendations for the owners and the user.
+
+| ID | Severity | Finding |
 |---|---|---|
-| `tests/test_load.py` | 11 | PASS |
-| `tests/test_eda.py` | 5 | PASS |
-| `tests/test_ml.py` | 12 | PASS |
-| `tests/test_inference.py` | 6 | PASS (note: not in prior count) |
-| **Total** | **39** | **PASS** |
+| m-1 | Minor | **Season labels.** Season code 1 covers about 21 Dec–20 Mar in the data, which is winter. The app, the EDA figure 03, the notebook, the contract and the reports label it "Spring", following the bundled `Readme.txt`. The live UCI page says 1 = winter. Numbers and predictions are unaffected; only the labels mislead. Fixing it needs one consistent decision across the project. |
+| m-3 | Minor | Notebook cells 17 and 34 use causal-sounding wording ("suppresses demand"), although disclaimers follow. |
+| m-4 | Minor | `.claude/agents/ui-launcher.md:32` and `ml-engineer.md:96` name `bike_demand_pipeline.joblib`. The correct file is `pipeline.joblib`, and the ui-launcher was briefed with it. `.claude/` was preserved unedited. |
+| m-5 | Minor | Test gaps: the split test re-sorts the data itself; the leakage test is partial; `compute_metrics` has no unit test; app validation is duplicated in the tests rather than imported. |
+| m-6 | Minor | The contract's `output_format.note` still says predictions may be negative, contradicting corrected C4/C5. It is generated by `train.py`, so fixing it needs a code change and contract regeneration. |
+| m-7 | Minor | An old absolute local path containing a username is still in pushed git history. HEAD is clean; removing it from history would need a history rewrite, which was not authorized. |
+| m-8 | Minor | The temp/atemp normalization constants differ between `Readme.txt` (÷41, ÷50) and the live UCI page (min-max scaling over −8..39 and −16..50). Only the °C hints in the app are affected. |
+| i-1 | Info | RF under-predicts on average (+16.5), and this is not discussed. Residual diagnostics exist only in the notebook, not in `train.py` or `ml-results.md`. |
+| i-2 | Info | The Context7 hook's `REQUIRED_LIBRARIES` list omits joblib, streamlit and pytest, and it ignores each entry's `status`. The hook is a workflow safeguard, not a security boundary. |
+| i-3 | Info | `.gitignore` has no `*.env`, `*.pem` or `*.key` patterns. No secrets are tracked. |
+| i-4 | Info | No `.gitattributes` file. Adding `* text=auto` would remove the CRLF-only ` M` noise on Windows. |
+| i-5 | Info | Overlapping reports (`qa-report.md` and `qa-audit-report.md`; `final-verification.md` and `post-run2-evidence-review.md`). `post-run2-evidence-review.md` still cites the CRLF hash. |
+| i-6 | Info | Research wording issues: the unsourced claim that growth was caused by network expansion; the wind-speed sentence that contradicts itself; 165 hours missing from the two-year span, not documented. |
 
-Run command: `uv run python -m pytest tests/ -v`
-
----
-
-## 15. Git History and Working-Tree Status
-
-**Branch:** master (up to date with origin/master)  
-**Commits added in this run:** 1 (notebook correction)  
-**Working tree at start:** Clean  
-**Working tree at end:** Clean (after commit)
-
----
-
-## 16. QA Findings and Resolutions
-
-| ID | Severity | Finding | Resolution |
-|---|---|---|---|
-| QA-001 | Low | `reports/final-run-report.md` untracked in git | Committed in second commit of this run |
-| QA-002 | Low | `scipy==1.15.3` in `pyproject.toml` not listed in CLAUDE.md required deps | Noted. scipy is a legitimate transitive dependency of scikit-learn, explicitly pinned. Not prohibited by CLAUDE.md. No change required. |
-| QA-003 | Low | Branch 1 commit ahead of `origin/master` (notebook fix not pushed) | Branch push is a separate authorized action; not performed in this run to keep scope minimal. User may push when ready. |
+### Limitations
+1. **The notebook was not executed in Google Colab.** Colab behaviour, including the upload widget and Colab's preinstalled library versions, is inferred from the code and from the local and LF-file tests.
+2. Figures were compared byte-for-byte; they were not reviewed visually in detail.
+3. The original UCI zip was not downloaded, per the no-download rule. Whether it uses CRLF or LF is unknown. The fixed check accepts either line-ending form of the same content.
 
 ---
 
-## 17. Remaining Limitations
+## H. UI launch evidence
 
-1. **Colab execution** cannot be interactively tested in this session. The upload flow is structurally correct but requires human verification in a Colab browser session.
-2. **Architecture document drift** — `reports/repository-architecture.md` does not reflect the actual file names (`src/modelling/` vs `src/models/`, `app/app.py` vs `app/dashboard.py`, etc.). This is documentation drift only; all code functions correctly.
-3. **sklearn version warning** — `pipeline.joblib` was saved with sklearn 1.8.0 (matches venv). System Python (3.15) shows a version warning but `uv run` uses the correct 1.8.0 venv.
-4. **Model trained on 2011–2012 data** only; does not generalize to other cities or years.
+**Authorization:** QA returned PASS WITH LIMITATIONS. The Lead Agent explicitly authorized a **local-only** launch, because none of the limitations affects the app's correctness.
+
+**Pre-launch checks**
+
+| Check | Result |
+|---|---|
+| `app/app.py` | present |
+| Contract | valid, 12 features |
+| `pipeline.joblib` | present, SHA-256 `73ad7db1…a834` matches |
+| Streamlit | 1.67.0 importable |
+| Port 8501 | free |
+
+**Launch command**
+- Effective command: `uv run --no-sync streamlit run app/app.py --server.port 8501 --server.headless true`, with `UV_OFFLINE=1`.
+- `--no-sync` was added to the established command so uv could not sync dependencies.
+- It was started as a detached process.
+
+**Running processes**
+
+| Process | PID |
+|---|---|
+| uv launcher | 17020 |
+| `streamlit.exe` | 10916 |
+| `.venv` python | 10268 |
+| Owner of the socket listening on `[::]:8501` | 8332 |
+
+**Verification**
+
+| Check | Result |
+|---|---|
+| Local URL | **http://localhost:8501** |
+| HTTP `GET /` | **200** (7,863 bytes), confirmed by the ui-launcher and again by the Lead with curl |
+| Health check `GET /_stcore/health` | **200**, body `ok` |
+| Server logs | "You can now view your Streamlit app in your browser"; no errors |
+
+**Browser interaction (verified by the Lead in Chrome)**
+- The page rendered the sidebar inputs and the Predict Demand button.
+- Clicking **Predict Demand** with the default inputs (the contract example) displayed **"Predicted Demand: 821 rentals / hour"**. This is consistent with the contract's 820.52.
+
+**Exposure note**
+- By default, Streamlit listens on all network interfaces (`[::]:8501`). It printed a LAN URL and an external IP URL.
+- Neither was tested, and no tunnel or public deployment was set up.
+- To restrict the server to this machine, relaunch with `--server.address 127.0.0.1`.
+
+**To stop the server:** `Stop-Process -Name streamlit`, then also stop PID 17020 if it is still running.
 
 ---
 
-## 18. Final Verdict
+## I. Change register
 
-**PASS**
+All changes were authorized by the Lead Agent after a reported, independently verified defect. Each owning agent changed only its own files, and no two agents worked on the same file concurrently.
 
-All 11 specialist agents completed their assigned work. The project is correct, reproducible, and leakage-free. The one authorized change (notebook dataset loading) was applied, verified, and committed. The Streamlit inference application is live and accessible.
+| File | Why it changed | Agent | Authorized | Commit |
+|---|---|---|---|---|
+| `README.md` | C1: stale `src/models`/`src/evaluation` layout; broken import `src.data_pipeline.load_data` (module is `load`); loader-error sentence claimed null/negative-`cnt` checks that do not exist | project-setup | Yes | `5b5c514` |
+| `reports/repository-architecture.md` | C2: the approved-structure doc did not match the built repo (paths, 11 agents, figure locations, notebook pip note) | repository-architect | Yes | `5b5c514` |
+| `reports/eda-findings.md` | C3: column types were "13 int / 3 float" (actually 12 int / 4 float); weather drop was "63%" (actually 63.7%, now "~64%") | data-scientist | Yes | `5b5c514` |
+| `reports/ml-results.md` | C4: 1–977 was labelled the training range (it is the full-dataset range; training is 1–957); negative-prediction note was wrong for a Random Forest | ml-engineer | Yes | `5b5c514` |
+| `notebooks/bike_demand_investigation.ipynb` | C5: a stored output exposed the local absolute path and username; the top-3 features were wrong (actually hr / atemp / temp); the negative-prediction note was wrong | colab-notebook-engineer | Yes | `5b5c514` |
+| `notebooks/bike_demand_investigation.ipynb` | M-1: SHA-256 check made independent of line endings; canonical LF hash | colab-notebook-engineer | Yes | `7add08b` |
+| `README.md` | m-2: commands to regenerate the EDA and the gitignored model after cloning | project-setup | Yes | `7add08b` |
+| `reports/final-run-report.md` | This report (sections A–J) | Lead Agent | Yes (mission section 7) | follow-up commit on the same branch |
+
+**Not changed, by decision:**
+- `data/raw/*`
+- `src/`, `app/`, `tests/`
+- `.claude/`, `CLAUDE.md`, `.gitignore`, `pyproject.toml`, `uv.lock`
+- the `.venv`
+
+Regenerated EDA and model outputs were byte-identical to HEAD, so they were not committed. `pipeline.joblib` is gitignored.
+
+**Push status:** nothing was pushed. The branch `fix/run3-reproducibility-corrections` exists locally only. Pushing it or merging it to `master` needs the user's approval: `git push -u origin fix/run3-reproducibility-corrections`.
+
+---
+
+## J. Final conclusion
 
 | Component | Status |
 |---|---|
-| Repository structure | PASS WITH NOTES (naming drift in architecture doc only) |
-| Python environment | PASS |
-| Dataset integrity | PASS (SHA-256 verified) |
-| Data pipeline | PASS |
-| Context7 documentation gate | SATISFIED |
-| Leakage prevention | PASS |
-| Chronological split | PASS |
-| Model training and evaluation | PASS (RF R²=0.900) |
-| Model artifact | PASS |
-| Inference contract | PASS |
-| EDA | PASS |
-| Notebook dataset loading | PASS (correction applied and verified) |
-| Streamlit application | PASS |
-| Test suite | PASS (39/39) |
-| Git hygiene | PASS |
-| **Inference app** | **Live at http://localhost:8501** |
+| Repository recovery from GitHub | **Fully reproduced.** All 46 files restored; HEAD = `origin/master` `f614793`. |
+| Environment (retained `.venv`, no downloads) | **Fully reproduced.** Versions match the lock; offline lock check clean. |
+| Dataset integrity | **Fully reproduced.** Content identical; canonical LF hash `b03a2d…`. |
+| EDA | **Fully reproduced.** 9/9 outputs byte-identical. |
+| Modelling, metrics, artifact, contract | **Fully reproduced.** Metrics equal the Run 2 reference exactly; artifact byte-identical when regenerated on this machine. |
+| Automated tests | **Fully reproduced.** 39/39 passing. |
+| Notebook | **Partially reproduced.** Local execution of its code reproduces every metric, and after fix M-1 its dataset check works for LF and CRLF copies. It has **not** been executed in Google Colab. |
+| Streamlit application | **Fully reproduced locally.** HTTP 200, health check `ok`, and a browser prediction of 821 rentals/hour. |
 
-**Files modified in this run: 1** (`notebooks/bike_demand_investigation.ipynb`)  
-**Agents completing without file changes: 9 of 11**
+**Overall:** the project **was reproduced from GitHub using the retained local resources**, with no dependency downloads, and the UI launch was verified locally after QA authorization.
 
----
+The reproduction was not achieved purely by restoring the files: one Major defect (M-1) had to be fixed first. The notebook's dataset check would have rejected the GitHub-hosted dataset on any non-Windows or LF checkout, including Colab. M-1 and six documentation inaccuracies were corrected in two authorized local commits.
 
-*Report generated by Lead Agent (Claude Sonnet 4.6) during the fresh-session end-to-end verification run on 2026-11-27.*
+Colab execution remains an explicit, unverified limitation. The minor findings listed in section G are left for the owners' decision. The most visible of them is the season labels.
