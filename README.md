@@ -49,6 +49,22 @@ df = load_hour_csv()  # defaults to data/raw/hour.csv
 `ValueError` when the file cannot be parsed or its row count, column count,
 or required columns do not match the UCI hourly dataset.
 
+## Reproducing the analysis and model
+
+Run these from the project root after cloning:
+
+```powershell
+uv run python src/data_analysis/eda.py
+uv run python src/modelling/train.py
+```
+
+- `eda.py` regenerates `artifacts/eda/*.csv` and `reports/figures/`.
+- `train.py` trains the baseline and Random Forest models and writes `modelling/artifacts/pipeline.joblib` (gitignored), `modelling/metrics.json`, `modelling/figures/`, and `artifacts/inference-contract.json`.
+
+The model artifact is not stored in git, so run `train.py` once after cloning before running tests that load the model or the app. Both scripts overwrite tracked outputs listed above.
+
+Then run the tests and launch the app as described below.
+
 ## Running tests
 
 ```powershell
