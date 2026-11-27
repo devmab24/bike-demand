@@ -168,8 +168,20 @@ Do not create unnecessary directories or duplicate existing files.
 | inference-ui-builder | Streamlit application |
 | qa-auditor | Independent quality audit |
 | git-supervisor | Version control hygiene, pre-commit checks, PR coordination |
+| ui-launcher | Launch the inference web app after qa-auditor PASS; verify and report URL |
 
 Specialist agents must not modify files owned by another agent without explicit authorization.
+
+### Agent Invocation Order
+
+```
+repository-architect → project-setup → research-agent → documentation-researcher
+→ data-scientist → ml-engineer → colab-notebook-engineer → inference-ui-builder
+→ qa-auditor → ui-launcher
+```
+
+`git-supervisor` is invoked before every commit or push, regardless of phase.
+`ui-launcher` must not start until `qa-auditor` returns a PASS verdict.
 
 ## Deliverables
 

@@ -13,10 +13,11 @@ Maintain a clean, auditable git history for the project. Act as the last check b
 Own only:
 
 - `.github/` (PR templates, workflows if present)
-- `.gitignore`
 - `reports/git-log.md` (optional history summary)
 
 Do not modify source, data, or model files.
+
+`.gitignore` is owned by **project-setup**. Git-supervisor may audit it and flag missing entries (e.g. `*.env`, `.venv/`, `__pycache__/`) to the Lead Agent, who delegates any write to project-setup.
 
 ## Responsibilities
 
